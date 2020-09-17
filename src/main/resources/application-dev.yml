@@ -1,0 +1,92 @@
+server:
+  port: 7702
+  servlet:
+    session:
+      timeout: 604800 # session有效期7天
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    maxTotal: 120
+    maxIdle: 10
+    timeBetweenEvictionRunsMillis: 30000
+    minEvictableIdleTimeMillis: 30000
+    testOnBorrow: true
+    host: 127.0.0.1
+    port: 6379
+    name:
+    password: root
+    database: 2
+  cloud:
+    gateway:
+      routes:
+        - id: getaway-soa-admin
+          uri: lb://soa-admin
+          predicates:
+            - Path=/soa-admin/**
+          filters:
+            - StripPrefix=1  #去掉- Path=/soa-admin 前缀
+            - PreserveHostHeader  #发送原主机头
+        - id: getaway-soa-service
+          uri: lb://soa-service
+          predicates:
+            - Path=/soa-service/**
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
+        - id: getaway-soa-auth
+          uri: lb://soa-auth
+#          order: -1  # 注意这个优先级的问题，因为对于此uri有多个路由器，如果优先级低，不会起作用
+          predicates:
+            - Path=/soa-auth/**
+#            - Path=/soa-auth/account/login  # 拦截登陆请求
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
+##            - Authentication   # 添加自定义的过滤器
+#            - name: RewritePath
+#              args:
+#                regexp: /soa-auth/(?<remaining>.*)
+#                replacement: /${remaining}
+  security:
+    user:
+      name: admin
+      password: admin
+
+primus:
+  cas:
+    server:
+#      host: http://localhost:28888  #cas 服务器地址
+      host: http://125.64.5.84:25010  #cas 服务器地址
+      login_url: ${primus.cas.server.host.url}/login #cas 登录地址
+  application:
+    platform-type: application-gateway
+    platform-type-name: gateway网关
+    type: ${spring.application.name}
+#    host: http://${spring.cloud.nacos.discovery.server-addr}
+#    host: http://${eureka.instance.hostname}:${server.port}
+    host: http://localhost:7601
+
+
+cas:
+  liu:
+    client:
+      #      host: http://localhost:28888  #cas 服务器地址
+#      casServiceUrl: http://125.64.5.84:25010  #cas 服务器地址
+      casServiceUrl: http://localhost:18181  #cas 服务器地址
+#      login_url: /login #cas 登录地址
+      serviceUrl: http://localhost:9980
+#      clientContextPath: /account/main
+      clientContextPath: /swagger-ui.html
+  application:
+    platform-type: application-gateway
+    platform-type-name: gateway网关
+    type: ${spring.application.name}
+    #    host: http://${spring.cloud.nacos.discovery.server-addr}
+    #    host: http://${eureka.instance.hostname}:${server.port}
+    host: http://localhost:7601
+
+logging:
+  config: classpath:logback-spring.xml
+
+

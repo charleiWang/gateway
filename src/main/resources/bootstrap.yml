@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: soa-gateway
+  cloud:
+    nacos:
+      #      配置中心配置--类似于spring cloud config
+      config:
+        server-addr: ${REGISTER_HOST:localhost}:${REGISTER_PORT:8848}
+        namespace: 0c423fce-1608-4efb-803c-a0b06117dab8
+        group: admin_soa
+        file-extension: yaml
+      #        注册中心配置---类似于eureka
+      discovery:
+        server-addr: ${REGISTER_HOST:localhost}:${REGISTER_PORT:8848}
+        namespace:  0c423fce-1608-4efb-803c-a0b06117dab8
+        group: admin_soa
