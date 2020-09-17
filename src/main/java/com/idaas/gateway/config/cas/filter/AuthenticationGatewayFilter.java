@@ -1,15 +1,3 @@
-/**
- * Created on [2020/2/20 9:06] by Administrator
- * <p>
- * 项目名称： cas TODO(项目名称)
- * <p>
- * 本程序版权属于福建慧政通信息科技有限公司所有。
- * 任何组织和个人未经福建慧政通信息科技有限公司许可与授权,不得擅自传播、复制、更改该程序的内容。
- * 本程序受版权法和国际条约的保护。如未经授权而擅自复制或传播本程序(或其中任何部分),
- * 将受到严厉的刑事及民事制裁，并将在法律许可的范围内受到最大可能的起诉!
- * <p>
- * ©2020 福建慧政通信息科技有限公司
- */
 package com.idaas.gateway.config.cas.filter;
 
 import lombok.extern.slf4j.Slf4j;
@@ -129,9 +117,10 @@ public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
         } else {
             //如果没有验证过ticket，说明还未登录过，重定向至cas服务端登录，并且带上登录成功后的回调地址
             String serviceUrl = this.constructServiceUrl(request);
-            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl + casClientConfig.casContextPath + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
-//            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl  + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
-            log.info("重定向路径:{}", urlToRedirectTo);
+//            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl + casClientConfig.casContextPath + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
+            // cas 服务器地址 有 /cas后缀
+            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl  + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
+            log.info("cas filter重定向路径:{}", urlToRedirectTo);
             return GatewayCommonUtils.redirect(exchange, urlToRedirectTo);
 
         }

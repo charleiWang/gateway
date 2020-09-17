@@ -72,8 +72,8 @@ cas:
   liu:
     client:
       #      host: http://localhost:28888  #cas 服务器地址
-#      casServiceUrl: http://125.64.5.84:25010  #cas 服务器地址
-      casServiceUrl: http://localhost:18181  #cas 服务器地址
+      casServiceUrl: http://125.64.5.84:25010  #cas 服务器地址
+#      casServiceUrl: http://localhost:18181  #cas 服务器地址
 #      login_url: /login #cas 登录地址
       serviceUrl: http://localhost:9980
 #      clientContextPath: /account/main

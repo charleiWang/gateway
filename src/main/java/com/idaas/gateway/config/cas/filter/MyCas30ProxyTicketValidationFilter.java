@@ -14,6 +14,7 @@ package com.idaas.gateway.config.cas.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.Protocol;
+import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.*;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -73,17 +74,21 @@ public class MyCas30ProxyTicketValidationFilter implements GlobalFilter, Ordered
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request=exchange.getRequest();
         ServerHttpResponse response=exchange.getResponse();
+        log.info("cas 验证");
         if(preFilter(request,response)){
-            //从参数中获取ticket参数
+            //从request参数中获取ticket参数
             String ticket= GatewayCommonUtils.safeGetParameter(request, this.protocol.getArtifactParameterName());
             //如果ticket参数为空则跳过ticket验证器，进入到认证拦截器，由认证拦截器去跳转到登录页面进行登录
+            log.info("参数中获取的ticket:{}", ticket);
             if(StringUtils.isEmpty(ticket)){
                 return chain.filter(exchange);
             }else {
                 try {
-                    log.info("验证ticket：{}", ticket);
+                    String serviceUrl = constructServiceUrl(request);
+                    log.info("验证ticket：{}, serviceUrl:{}", ticket, serviceUrl);
+
                     //验证ticket的有效性
-                    Assertion assertion=ticketValidator.validate(ticket, constructServiceUrl(request));
+                    Assertion assertion=ticketValidator.validate(ticket,serviceUrl);
                     Object authId = request.getCookies().get(casClientConfig.authKey);
                     if(authId==null){
                         //cookie为空跳转到认证服务器去认证
@@ -112,6 +117,7 @@ public class MyCas30ProxyTicketValidationFilter implements GlobalFilter, Ordered
     //将访问的地址编码进行URLEncode后返回
     protected final String constructServiceUrl(ServerHttpRequest request) {
         String s = GatewayCommonUtils.constructServiceUrl(request, this.protocol.getServiceParameterName(), this.protocol.getArtifactParameterName(), true, true);
+        log.info("访问的地址编码进行URLEncode:{}",s);
         return GatewayCommonUtils.constructServiceUrl(request, this.protocol.getServiceParameterName(), this.protocol.getArtifactParameterName(), true,true);
     }
 
