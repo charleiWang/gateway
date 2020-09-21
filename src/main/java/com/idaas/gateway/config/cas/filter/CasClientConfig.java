@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * ──────────────────────────────────────────
  */
 @Data
-@ConfigurationProperties(prefix = "cas.liu.client")
+@ConfigurationProperties(prefix = "cas.idaas.client")
 public class CasClientConfig {
 
 
@@ -36,7 +36,8 @@ public class CasClientConfig {
     public String serviceUrl;
 
     //CAS 服务路径
-    public String casContextPath="/cas";
+//    public String casContextPath="/cas";
+    public String casContextPath="";
 
     //应用部署路径
     public String clientContextPath;

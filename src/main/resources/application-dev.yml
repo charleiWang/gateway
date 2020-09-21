@@ -27,6 +27,7 @@ spring:
           filters:
             - StripPrefix=1  #去掉- Path=/soa-admin 前缀
             - PreserveHostHeader  #发送原主机头
+#            - SwaggerHeaderFilter
         - id: getaway-soa-service
           uri: lb://soa-service
           predicates:
@@ -43,6 +44,7 @@ spring:
           filters:
             - StripPrefix=1
             - PreserveHostHeader
+#            - SwaggerHeaderFilter
 ##            - Authentication   # 添加自定义的过滤器
 #            - name: RewritePath
 #              args:
@@ -69,15 +71,15 @@ primus:
 
 
 cas:
-  liu:
+  idaas:
     client:
       #      host: http://localhost:28888  #cas 服务器地址
       casServiceUrl: http://125.64.5.84:25010  #cas 服务器地址
 #      casServiceUrl: http://localhost:18181  #cas 服务器地址
 #      login_url: /login #cas 登录地址
-      serviceUrl: http://localhost:9980
-#      clientContextPath: /account/main
-      clientContextPath: /swagger-ui.html
+      serviceUrl: http://localhost:7601
+      clientContextPath: /account/main
+#      clientContextPath: /swagger-ui.html
   application:
     platform-type: application-gateway
     platform-type-name: gateway网关

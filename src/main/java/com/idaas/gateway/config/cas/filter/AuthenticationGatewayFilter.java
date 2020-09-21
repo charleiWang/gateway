@@ -22,15 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * 功能： TODO(用一句话描述类的功能)
- * <p>
- * ──────────────────────────────────────────
- * version  变更日期    修改人    修改说明
- * ------------------------------------------
- * V1.0.0   2020/2/20    Liush     初版
- * ──────────────────────────────────────────
- */
+
 @Slf4j
 public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
 
@@ -113,12 +105,14 @@ public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
         Assertion assertion = (Assertion) cookieHolder.getAttr(authId.toString(),"_const_cas_assertion_");
         //如果已经存在登录信息应用之前已经登录，直接跳过
         if (assertion != null) {
+            log.info("缓存中已有认证信息");
             return chain.filter(exchange);
         } else {
             //如果没有验证过ticket，说明还未登录过，重定向至cas服务端登录，并且带上登录成功后的回调地址
             String serviceUrl = this.constructServiceUrl(request);
-//            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl + casClientConfig.casContextPath + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
             // cas 服务器地址 有 /cas后缀
+//            String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl + casClientConfig.casContextPath + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
+
             String urlToRedirectTo = GatewayCommonUtils.constructRedirectUrl(casClientConfig.casServiceUrl  + casClientConfig.loginUrl, this.protocol.getServiceParameterName(), serviceUrl);
             log.info("cas filter重定向路径:{}", urlToRedirectTo);
             return GatewayCommonUtils.redirect(exchange, urlToRedirectTo);
